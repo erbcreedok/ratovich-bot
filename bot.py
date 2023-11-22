@@ -1,5 +1,7 @@
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler, ConversationHandler, ContextTypes
+from cities import cities_reply_keyboard
+from save_data import save_data
 
 # Define conversation stages
 (CHOOSING_ACTION, TYPING_NAME, TYPING_AGE, CHOOSING_CITY, CHOOSING_LEVEL, CHOOSING_LOCATION, TYPING_PRICE, SHARING_PHONE) = range(8)
@@ -27,7 +29,7 @@ async def typing_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Input age
 async def typing_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['age'] = update.message.text
-    reply_keyboard = [['Астана', 'Алматы', 'Караганда'], ['Кокшетау', 'Актобе', 'Талдыкорган']]
+    reply_keyboard = cities_reply_keyboard
     await update.message.reply_text(
         "Ваш город?",
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
@@ -59,7 +61,7 @@ async def choosing_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['location'] = update.message.text
     action = context.user_data.get('action')
     reply_keyboard = [['3000', '5000', '10000']]
-    question = 'Сколько ваш стоит урок?'
+    question = 'Сколько стоит ваш урок?'
     if action == 'Обучиться':
         question = 'Сколько вы готовы платить за урок?'
     await update.message.reply_text(question, reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
@@ -77,6 +79,7 @@ async def sharing_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
     contact = update.message.contact
     context.user_data['phone'] = contact.phone_number
     await update.message.reply_text('Спасибо за информацию!')
+    save_data(context.user_data)
     return ConversationHandler.END
 
 # Cancel conversation
@@ -87,7 +90,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Main function to run the bot
 def main():
     # Create the Application and pass in the bot's token
-    application = Application.builder().token("6874324316:AAGuPEjR_P25ASyBK93RWb_ZdDiLtPM_oOI").build()
+    application = Application.builder().token("6612564814:AAHzxOrOg4MKUQehkfQ2qDOLRtjHw1IvcnA").build()
 
     # Define the conversation handler
     conv_handler = ConversationHandler(
