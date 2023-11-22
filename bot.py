@@ -38,7 +38,10 @@ async def typing_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Choose city
 async def choosing_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['city'] = update.message.text
+    action = context.user_data.get('action')
     reply_keyboard = [['Средний', 'Высшее', 'Магистратура']]
+    if action == 'Обучиться':
+        reply_keyboard = [['Начинающий', 'Средний', 'Продвинутый']]
     await update.message.reply_text(
         text="Какой у Вас уровень игры на пианино?",
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
